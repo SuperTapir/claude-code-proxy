@@ -8,10 +8,11 @@ class Config:
         if not self.openai_api_key:
             raise ValueError("OPENAI_API_KEY not found in environment variables")
         
-        # Add Anthropic API key for client validation
-        self.anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not self.anthropic_api_key:
-            print("Warning: ANTHROPIC_API_KEY not set. Client API key validation will be disabled.")
+        # Add Proxy API key for client validation
+        # We use PROXY_API_KEY instead of ANTHROPIC_API_KEY to avoid conflicts with client tools
+        self.client_api_key = os.environ.get("PROXY_API_KEY")
+        if not self.client_api_key:
+            print("Warning: PROXY_API_KEY not set. Client API key validation will be disabled.")
         
         self.openai_base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
         self.azure_api_version = os.environ.get("AZURE_API_VERSION")  # For Azure OpenAI
@@ -40,13 +41,13 @@ class Config:
         return True
         
     def validate_client_api_key(self, client_api_key):
-        """Validate client's Anthropic API key"""
-        # If no ANTHROPIC_API_KEY is set in environment, skip validation
-        if not self.anthropic_api_key:
+        """Validate client's API key"""
+        # If no PROXY_API_KEY is set in environment, skip validation
+        if not self.client_api_key:
             return True
             
         # Check if the client's API key matches the expected value
-        return client_api_key == self.anthropic_api_key
+        return client_api_key == self.client_api_key
     
     def get_custom_headers(self):
         """Get custom headers from environment variables"""
