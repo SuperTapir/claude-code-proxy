@@ -2,7 +2,23 @@ from fastapi import FastAPI
 from src.api.endpoints import router as api_router
 import uvicorn
 import sys
+import logging
 from src.core.config import config
+
+
+class EndpointFilter(logging.Filter):
+    """Filter out specific endpoints from uvicorn access logs."""
+
+    def __init__(self, excluded_paths: list[str] = None):
+        super().__init__()
+        self.excluded_paths = excluded_paths or []
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        message = record.getMessage()
+        for path in self.excluded_paths:
+            if path in message:
+                return False
+        return True
 
 app = FastAPI(title="Claude-to-OpenAI API Proxy", version="1.0.0")
 
@@ -54,11 +70,17 @@ def main():
 
     # Parse log level - extract just the first word to handle comments
     log_level = config.log_level.split()[0].lower()
-    
+
     # Validate and set default if invalid
     valid_levels = ['debug', 'info', 'warning', 'error', 'critical']
     if log_level not in valid_levels:
         log_level = 'info'
+
+    # Add filter to uvicorn access logger to suppress noisy endpoints
+    uvicorn_access_logger = logging.getLogger("uvicorn.access")
+    uvicorn_access_logger.addFilter(
+        EndpointFilter(excluded_paths=["/api/event_logging/batch"])
+    )
 
     # Start server
     uvicorn.run(
