@@ -16,6 +16,7 @@ def convert_claude_to_openai(
 
     # Map model
     openai_model = model_manager.map_claude_model_to_openai(claude_request.model)
+    logger.info(f"Model mapping: {claude_request.model} -> {openai_model}")
 
     # Convert messages
     openai_messages = []
