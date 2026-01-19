@@ -16,7 +16,6 @@ def convert_claude_to_openai(
 
     # Map model
     openai_model = model_manager.map_claude_model_to_openai(claude_request.model)
-    logger.info(f"Model mapping: {claude_request.model} -> {openai_model}")
 
     # Convert messages
     openai_messages = []
@@ -75,12 +74,15 @@ def convert_claude_to_openai(
         i += 1
 
     # Build OpenAI request
+    # 根据实际使用的模型获取 max_tokens_limit（只有 auto 模式下会根据模型映射）
+    max_tokens_limit = config.get_max_tokens_for_model(openai_model)
+    logger.info(f"Model mapping: {claude_request.model} -> {openai_model}, max_tokens_limit={max_tokens_limit} (auto_mode={config.auto_tokens_mode})")
     openai_request = {
         "model": openai_model,
         "messages": openai_messages,
         "max_tokens": min(
             max(claude_request.max_tokens, config.min_tokens_limit),
-            config.max_tokens_limit,
+            max_tokens_limit,
         ),
         "temperature": claude_request.temperature,
         "stream": claude_request.stream,

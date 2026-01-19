@@ -6,6 +6,7 @@ show_help() {
     echo ""
     echo "选项:"
     echo "  -h, --help     显示帮助信息"
+    echo "  -auto          根据模型自动设置 MAX_TOKENS_LIMIT (映射配置在 src/core/config.py)"
     echo ""
     echo "环境变量覆盖:"
     echo "  可以通过 VAR=VALUE 格式覆盖 .env 中的变量"
@@ -30,6 +31,10 @@ parse_args() {
             -h|--help)
                 show_help
                 exit 0
+                ;;
+            -auto)
+                export AUTO_TOKENS_MODE=true
+                echo "启用 auto 模式: 将根据模型自动设置 MAX_TOKENS_LIMIT"
                 ;;
             *=*)
                 # 格式: VAR=VALUE，导出为环境变量

@@ -1,6 +1,12 @@
 import os
 import sys
 
+# 模型到 MAX_TOKENS_LIMIT 的映射
+MODEL_TOKENS_MAP = {
+    "copilotcode-13": 200000,
+    "lyra-flash-6": 1000000,
+}
+
 # Configuration
 class Config:
     def __init__(self):
@@ -30,6 +36,19 @@ class Config:
         self.big_model = os.environ.get("BIG_MODEL", "gpt-4o")
         self.middle_model = os.environ.get("MIDDLE_MODEL", self.big_model)
         self.small_model = os.environ.get("SMALL_MODEL", "gpt-4o-mini")
+
+        # Auto tokens mode - 根据模型自动设置 MAX_TOKENS_LIMIT
+        self.auto_tokens_mode = os.environ.get("AUTO_TOKENS_MODE", "").lower() == "true"
+
+    def get_max_tokens_for_model(self, model: str) -> int:
+        """根据模型获取 MAX_TOKENS_LIMIT
+
+        如果启用了 auto_tokens_mode，则从 MODEL_TOKENS_MAP 中查找对应的值
+        否则返回配置的 max_tokens_limit
+        """
+        if self.auto_tokens_mode and model in MODEL_TOKENS_MAP:
+            return MODEL_TOKENS_MAP[model]
+        return self.max_tokens_limit
         
     def validate_api_key(self):
         """Basic API key validation"""
