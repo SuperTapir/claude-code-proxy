@@ -31,3 +31,11 @@ lyra-flash-10 gemini-3.0-flash-preview
       #copilotcode-13 claude-4.5-opus
       #code-speed-1 grok-code-fast-1
 ```
+
+curl获取模型指令：
+```bash
+curl "https://llm.api.zyuncs.com/v1/models" \
+     -H 'Authorization: Bearer your-api-key' \
+     -H 'Content-Type: application/json'
+```  
+文档：https://zyun.qihoo.net/product/apimarketitem/llm  
