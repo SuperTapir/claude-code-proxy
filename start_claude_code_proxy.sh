@@ -92,4 +92,31 @@ fi
 
 # 激活虚拟环境并运行脚本
 source .venv/bin/activate
-uv run start_proxy.py
+
+# 使用 caffeinate 运行服务，防止 macOS App Nap 和系统休眠导致进程被终止
+# -i: 防止系统空闲休眠  -s: 防止系统休眠（仅AC电源时有效）
+caffeinate -is uv run start_proxy.py
+exit_code=$?
+
+# 解析退出码，输出退出原因
+if [ $exit_code -eq 0 ]; then
+    echo ""
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 服务正常退出"
+elif [ $exit_code -gt 128 ]; then
+    # 退出码大于128表示被信号终止，信号值 = 退出码 - 128
+    signal_num=$((exit_code - 128))
+    case $signal_num in
+        1)  signal_name="SIGHUP (终端挂断)" ;;
+        2)  signal_name="SIGINT (Ctrl+C 中断)" ;;
+        9)  signal_name="SIGKILL (强制终止)" ;;
+        15) signal_name="SIGTERM (请求终止，可能是系统或其他进程发送)" ;;
+        *)  signal_name="SIGNAL_$signal_num" ;;
+    esac
+    echo ""
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 服务被信号终止: $signal_name (退出码: $exit_code)"
+else
+    echo ""
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] 服务异常退出，退出码: $exit_code"
+fi
+
+exit $exit_code
