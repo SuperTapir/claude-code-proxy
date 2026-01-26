@@ -107,7 +107,7 @@ def convert_claude_to_openai(
                         Constants.TOOL_FUNCTION: {
                             "name": tool.name,
                             "description": tool.description or "",
-                            "parameters": tool.input_schema,
+                            "parameters": normalize_tool_parameters(tool.input_schema),
                         },
                     }
                 )
@@ -228,8 +228,27 @@ def convert_claude_tool_results(msg: ClaudeMessage) -> List[Dict[str, Any]]:
     return tool_messages
 
 
+def normalize_tool_parameters(input_schema: dict) -> dict:
+    """
+    规范化工具参数，确保符合 Google Vertex AI 的要求。
+
+    Google Vertex AI 要求 parameters 必须是 type: "object" 且包含 properties 字段。
+
+    Args:
+        input_schema: Claude 工具的 input_schema 字典，可能为 None
+
+    Returns:
+        规范化后的 parameters 字典
+    """
+    parameters = (input_schema or {}).copy()
+    if "type" not in parameters:
+        parameters["type"] = "object"
+    if "properties" not in parameters:
+        parameters["properties"] = {}
+    return parameters
+
+
 def parse_tool_result_content(content):
-    """Parse and normalize tool result content into a string format."""
     if content is None:
         return "No content provided"
 
