@@ -5,6 +5,8 @@ import sys
 MODEL_TOKENS_MAP = {
     "copilotcode-13": 200000,
     "lyra-flash-6": 1000000,
+    "cortex-15":400000,
+    "cortex-12":200000
 }
 
 # Configuration
