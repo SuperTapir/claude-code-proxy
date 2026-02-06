@@ -24,6 +24,7 @@ openai_client = OpenAIClient(
     config.openai_api_key,
     config.openai_base_url,
     config.request_timeout,
+    config.read_timeout,
     api_version=config.azure_api_version,
     custom_headers=custom_headers,
 )

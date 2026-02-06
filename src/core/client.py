@@ -1,5 +1,6 @@
 import asyncio
 import json
+import httpx
 from fastapi import HTTPException
 from typing import Optional, AsyncGenerator, Dict, Any
 from openai import AsyncOpenAI, AsyncAzureOpenAI
@@ -9,34 +10,42 @@ from openai._exceptions import APIError, RateLimitError, AuthenticationError, Ba
 class OpenAIClient:
     """Async OpenAI client with cancellation support."""
     
-    def __init__(self, api_key: str, base_url: str, timeout: int = 90, api_version: Optional[str] = None, custom_headers: Optional[Dict[str, str]] = None):
+    def __init__(self, api_key: str, base_url: str, timeout: int = 90, read_timeout: int = 240, api_version: Optional[str] = None, custom_headers: Optional[Dict[str, str]] = None):
         self.api_key = api_key
         self.base_url = base_url
         self.custom_headers = custom_headers or {}
-        
+
+        # 分别设置连接超时和读取超时，避免流式传输中途超时
+        request_timeout = httpx.Timeout(
+            connect=timeout,
+            read=read_timeout,
+            write=timeout,
+            pool=timeout,
+        )
+
         # Prepare default headers
         default_headers = {
             "Content-Type": "application/json",
             "User-Agent": "claude-proxy/1.0.0"
         }
-        
+
         # Merge custom headers with default headers
         all_headers = {**default_headers, **self.custom_headers}
-        
+
         # Detect if using Azure and instantiate the appropriate client
         if api_version:
             self.client = AsyncAzureOpenAI(
                 api_key=api_key,
                 azure_endpoint=base_url,
                 api_version=api_version,
-                timeout=timeout,
+                timeout=request_timeout,
                 default_headers=all_headers
             )
         else:
             self.client = AsyncOpenAI(
                 api_key=api_key,
                 base_url=base_url,
-                timeout=timeout,
+                timeout=request_timeout,
                 default_headers=all_headers
             )
         self.active_requests: Dict[str, asyncio.Event] = {}
