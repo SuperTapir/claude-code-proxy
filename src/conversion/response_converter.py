@@ -360,7 +360,19 @@ async def convert_openai_streaming_to_claude_with_cancellation(
             yield f"event: error\ndata: {json.dumps(error_event, ensure_ascii=False)}\n\n"
             return
         else:
-            raise
+            # 流式传输已经开始，不能再 raise HTTPException，否则会导致
+            # "Caught handled exception, but response already started" 错误
+            # 将错误转为 SSE error 事件发送给客户端
+            logger.error(f"HTTPException during streaming: status={e.status_code}, detail={e.detail}")
+            error_event = {
+                "type": "error",
+                "error": {
+                    "type": "api_error",
+                    "message": f"Streaming error (HTTP {e.status_code}): {e.detail}",
+                },
+            }
+            yield f"event: error\ndata: {json.dumps(error_event, ensure_ascii=False)}\n\n"
+            return
     except Exception as e:
         # Handle any streaming errors gracefully
         logger.error(f"Streaming error: {e}")
