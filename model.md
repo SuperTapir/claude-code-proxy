@@ -13,6 +13,7 @@ lyra-flash-10 gemini-3.0-flash-preview
       #cortex-6  gpt-5-mini
       #cortex-5  gpt-5
       #cortex-4  gpt-4o
+      #cortex-16 gpt-5.2-codex
       #cortex-15 gpt-5.2
       #cortex-14 gpt-4-turbo
       #cortex-13 o4-mini
@@ -29,6 +30,7 @@ lyra-flash-10 gemini-3.0-flash-preview
       #copilotcode-11 claude-3.5-sonnet
       #copilotcode-10 claude-4.5-haiku
       #copilotcode-13 claude-4.5-opus
+      #copilotcode-14 claude-4.6-opus
       #code-speed-1 grok-code-fast-1
 ```
 
