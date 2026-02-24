@@ -3,8 +3,10 @@ import sys
 
 # 模型到 MAX_TOKENS_LIMIT 的映射
 MODEL_TOKENS_MAP = {
+    "copilotcode-15": 1000000,
     "copilotcode-14": 1000000,
     "copilotcode-13": 200000,
+    "lyra-flash-11": 1000000,
     "lyra-flash-6": 1000000,
     "cortex-16": 400000,
     "cortex-15":400000,

@@ -1,5 +1,6 @@
 ```markdown
-lyra-flash-10 gemini-3.0-flash-preview
+      #lyra-flash-11 gemini-3.1
+      #lyra-flash-10 gemini-3.0-flash-preview
       #lyra-flash-9 gemini-3.0-pro-image-preview
       #lyra-flash-8 gemini-2.5-flash-lite
       #lyra-flash-7 gemini-2.0-flash
@@ -31,6 +32,7 @@ lyra-flash-10 gemini-3.0-flash-preview
       #copilotcode-10 claude-4.5-haiku
       #copilotcode-13 claude-4.5-opus
       #copilotcode-14 claude-4.6-opus
+      #copilotcode-15 claude-4.6-sonnet
       #code-speed-1 grok-code-fast-1
 ```
 
