@@ -1,5 +1,5 @@
 ```markdown
-      #lyra-flash-11 gemini-3.1
+      #lyra-flash-11 gemini-3.1-pro-preview
       #lyra-flash-10 gemini-3.0-flash-preview
       #lyra-flash-9 gemini-3.0-pro-image-preview
       #lyra-flash-8 gemini-2.5-flash-lite
@@ -14,7 +14,7 @@
       #cortex-6  gpt-5-mini
       #cortex-5  gpt-5
       #cortex-4  gpt-4o
-      #cortex-16 gpt-5.2-codex
+      #cortex-16 gpt-5.3-codex
       #cortex-15 gpt-5.2
       #cortex-14 gpt-4-turbo
       #cortex-13 o4-mini
