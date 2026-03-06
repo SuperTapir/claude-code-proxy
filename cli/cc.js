@@ -8,17 +8,21 @@ import { detectRunningProxies } from './process-detector.js';
 /**
  * 连接到指定端口的代理
  * @param {number} port - 代理端口
+ * @param {string[]} args - 透传给 claude 的命令行参数
  */
-function connectToProxy(port) {
+function connectToProxy(port, args = []) {
   const baseUrl = `http://127.0.0.1:${port}`;
   console.log(`连接到代理: ${baseUrl}\n`);
-  spawn('claude', [], {
+  spawn('claude', args, {
     stdio: 'inherit',
     env: { ...process.env, ANTHROPIC_BASE_URL: baseUrl },
   });
 }
 
 async function main() {
+  // 收集 cc 命令后的参数，透传给 claude
+  const passthrough = process.argv.slice(2);
+
   // 解析配置
   const configPath = getDefaultConfigPath();
   const models = parseProxyModelsConf(configPath);
@@ -44,7 +48,7 @@ async function main() {
     // 只有一个运行中的代理，直接连接
     const model = runningModels[0];
     console.log(`检测到 1 个运行中的代理: ${model.description}\n`);
-    connectToProxy(model.port);
+    connectToProxy(model.port, passthrough);
     return;
   }
 
@@ -70,7 +74,7 @@ async function main() {
     process.exit(0);
   }
 
-  connectToProxy(parseInt(selectedPort, 10));
+  connectToProxy(parseInt(selectedPort, 10), passthrough);
 }
 
 main().catch((err) => {
