@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "description": "A proxy server that enables **Claude Code** to work with OpenAI-compatible API providers. Convert Claude API requests to OpenAI API calls, allowing you to use various LLM providers through the Claude Code CLI.",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "test": "tests"
   },
   "bin": {
-    "ccc": "./start_claude_code_proxy.sh"
+    "ccc": "./start_claude_code_proxy.sh",
+    "ccp": "./cli/cc.js"
+  },
+  "dependencies": {
+    "enquirer": "^2.4.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

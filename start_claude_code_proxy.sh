@@ -7,6 +7,7 @@ show_help() {
     echo "选项:"
     echo "  -h, --help     显示帮助信息"
     echo "  -auto          根据模型自动设置 MAX_TOKENS_LIMIT (映射配置在 src/core/config.py)"
+    echo "  -i, --interactive  交互式多代理管理模式，选择要启动的代理"
     echo "  -d, --daemon   守护模式运行，服务退出后自动重启"
     echo ""
     echo "环境变量覆盖:"
@@ -26,8 +27,9 @@ show_help() {
     echo "  MAX_TOKENS_LIMIT, MIN_TOKENS_LIMIT"
 }
 
-# 守护进程模式标志
+# 模式标志
 DAEMON_MODE=false
+INTERACTIVE_MODE=false
 
 # 解析命令行参数
 parse_args() {
@@ -36,6 +38,9 @@ parse_args() {
             -h|--help)
                 show_help
                 exit 0
+                ;;
+            -i|--interactive)
+                INTERACTIVE_MODE=true
                 ;;
             -d|--daemon)
                 DAEMON_MODE=true
@@ -91,6 +96,27 @@ cd "$PROJECT_ROOT_DIR" || {
     echo "错误: 无法切换到目录: $PROJECT_ROOT_DIR"
     exit 1
 }
+
+# 交互模式：启动多代理管理界面
+if [ "$INTERACTIVE_MODE" = true ]; then
+    # 检查 node_modules 是否存在，不存在则安装依赖
+    if [ ! -d "node_modules" ]; then
+        echo "首次运行交互模式，正在安装依赖..."
+        npm install
+    fi
+
+    # 收集除 -i/--interactive 外的参数作为透传
+    PASSTHROUGH_ARGS=()
+    for arg in "$@"; do
+        case "$arg" in
+            -i|--interactive) ;;
+            *) PASSTHROUGH_ARGS+=("$arg") ;;
+        esac
+    done
+
+    node "$PROJECT_ROOT_DIR/cli/ccc-interactive.js" "${PASSTHROUGH_ARGS[@]}"
+    exit $?
+fi
 
 # 检查虚拟环境是否存在
 if [ ! -d ".venv" ]; then
