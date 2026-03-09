@@ -1,5 +1,6 @@
 import json
 import uuid
+import traceback
 from fastapi import HTTPException, Request
 from src.core.constants import Constants
 from src.models.claude import ClaudeMessagesRequest
@@ -190,9 +191,7 @@ async def convert_openai_streaming_to_claude(
 
     except Exception as e:
         # Handle any streaming errors gracefully
-        logger.error(f"Streaming error: {e}")
-        import traceback
-
+        logger.error(f"Streaming error: {type(e).__name__}: {e}")
         logger.error(traceback.format_exc())
         error_event = {
             "type": "error",
@@ -363,7 +362,7 @@ async def convert_openai_streaming_to_claude_with_cancellation(
             # 流式传输已经开始，不能再 raise HTTPException，否则会导致
             # "Caught handled exception, but response already started" 错误
             # 将错误转为 SSE error 事件发送给客户端
-            logger.error(f"HTTPException during streaming: status={e.status_code}, detail={e.detail}")
+            logger.error(f"HTTPException during streaming: status={e.status_code}, detail={e.detail}\n{traceback.format_exc()}")
             error_event = {
                 "type": "error",
                 "error": {
@@ -375,9 +374,7 @@ async def convert_openai_streaming_to_claude_with_cancellation(
             return
     except Exception as e:
         # Handle any streaming errors gracefully
-        logger.error(f"Streaming error: {e}")
-        import traceback
-
+        logger.error(f"Streaming error: {type(e).__name__}: {e}")
         logger.error(traceback.format_exc())
         error_event = {
             "type": "error",
