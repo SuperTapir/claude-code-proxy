@@ -14,6 +14,7 @@
       #cortex-6  gpt-5-mini
       #cortex-5  gpt-5
       #cortex-4  gpt-4o
+      #cortex-17 gpt-5.4
       #cortex-16 gpt-5.3-codex
       #cortex-15 gpt-5.2
       #cortex-14 gpt-4-turbo
