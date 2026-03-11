@@ -151,7 +151,7 @@ def convert_claude_user_message(msg: ClaudeMessage) -> Dict[str, Any]:
                 isinstance(block.source, dict)
                 and block.source.get("type") == "base64"
                 and "media_type" in block.source
-                and "data" in block.source
+                and block.source.get("data")
             ):
                 openai_content.append(
                     {
