@@ -2,7 +2,7 @@ import json
 from typing import Dict, Any, List
 from venv import logger
 from src.core.constants import Constants
-from src.models.claude import ClaudeMessagesRequest, ClaudeMessage
+from src.models.claude import ClaudeMessagesRequest, ClaudeMessage, ClaudeBuiltinTool
 from src.core.config import config
 import logging
 
@@ -96,10 +96,14 @@ def convert_claude_to_openai(
     if claude_request.top_p is not None:
         openai_request["top_p"] = claude_request.top_p
 
-    # Convert tools
+    # Convert tools (skip built-in tools like web_search, which have no OpenAI equivalent)
     if claude_request.tools:
         openai_tools = []
         for tool in claude_request.tools:
+            # Skip built-in tools (e.g., web_search_20250305) — they don't map to OpenAI functions
+            if isinstance(tool, ClaudeBuiltinTool):
+                logger.debug(f"Skipping built-in tool: {tool.type}/{tool.name}")
+                continue
             if tool.name and tool.name.strip():
                 openai_tools.append(
                     {
