@@ -49,7 +49,7 @@ class Config:
         self.auto_tokens_mode = os.environ.get("AUTO_TOKENS_MODE", "").lower() == "true"
 
         # Skip built-in tools (e.g., web_search) instead of rejecting the request
-        self.skip_builtin_tools = os.environ.get("SKIP_BUILTIN_TOOLS", "true").lower() != "false"
+        self.skip_builtin_tools = os.environ.get("SKIP_BUILTIN_TOOLS", "false").lower() == "true"
 
     def get_max_tokens_for_model(self, model: str) -> int:
         """根据模型获取 MAX_TOKENS_LIMIT
